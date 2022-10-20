@@ -13,9 +13,11 @@ endif
 " -----------------------------------------------------------------------------
 " Bundles
 " -----------------------------------------------------------------------------
-if !isdirectory("~/.vim/bundle/Vundle.vim")
-    execute ':silent !mkdir ~/.vim/bundle'
-    execute ':silent !git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim'
+let bundle_dir = expand("~/.vim/bundle")
+let vundle_dir = bundle_dir . '/Vundle.vim'
+if !isdirectory(vundle_dir)
+    execute ':silent !mkdir -p' bundle_dir
+    execute ':silent !git clone https://github.com/VundleVim/Vundle.vim.git' vundle_dir
 endif
 
 set rtp+=~/.vim/bundle/Vundle.vim
