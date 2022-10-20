@@ -1,0 +1,216 @@
+set nocompatible
+set encoding=utf-8
+filetype off
+
+let hostname = substitute(system('hostname'), '\n', '', '')
+let arch = substitute(system('uname -m'), '\n', '', '')
+
+" A bunch of vim stuff depend on more POSIX compliance than fish provides
+if &shell =~# 'fish$'
+  set shell=sh
+endif
+
+" -----------------------------------------------------------------------------
+" Bundles
+" -----------------------------------------------------------------------------
+if !isdirectory("~/.vim/bundle/Vundle.vim")
+    execute ':silent !mkdir ~/.vim/bundle'
+    execute ':silent !git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim'
+endif
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+Plugin 'ctrlpvim/ctrlp.vim'
+
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+
+Plugin 'Yggdroot/indentLine'
+
+Plugin 'henrik/vim-indexed-search'
+
+Plugin 'michaeljsmith/vim-indent-object'
+
+Plugin 'tomtom/tcomment_vim'
+
+Plugin 'tpope/vim-fugitive'
+
+Plugin 'tpope/vim-surround'
+
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+
+Plugin 'dense-analysis/ale'
+
+Plugin 'fatih/vim-go'
+
+Plugin 'rust-lang/rust.vim'
+
+Plugin 'dag/vim-fish'
+
+" Colors
+Plugin 'Lokaltog/vim-distinguished'
+Plugin 'nanotech/jellybeans.vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+let g:airline#extensions#tabline#enabled = 1
+let g:ale_completion_enabled = 1
+
+" -----------------------------------------------------------------------------
+" Local config
+" -----------------------------------------------------------------------------
+for scheme in [ 'jellybeans', 'default' ]
+  try
+    execute 'colorscheme '.scheme
+    break
+  catch
+    continue
+  endtry
+endfor
+
+" Further color config is here to avoid being cleared by themes
+set spell
+set cursorline
+set hlsearch
+set showmatch
+set ttyfast
+set ttymouse=sgr
+set mouse=a
+set backspace=indent,eol,start
+set relativenumber
+set number
+set colorcolumn=80
+
+syntax on
+set background=dark
+highlight clear SpellBad
+highlight SpellBad cterm=underline
+
+vnoremap < <gv
+vnoremap > >gv
+
+execute ':silent !mkdir -p ~/.vim/swap-files'
+set swapfile
+set dir=~/.vim/swap-files
+
+" Auto-reload vimrc
+augroup MYVIMRC
+  autocmd!
+  autocmd BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc
+    \ if filereadable($MYVIMRC) |
+    \    source $MYVIMRC |
+    \ endif |
+    \ if has('gui_running') && filereadable($MYGVIMRC) |
+    \    source $MYGVIMRC |
+    \ endif
+augroup END
+
+" Return to last edit position when opening files
+autocmd BufReadPost *
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   execute "normal! g`\"" |
+  \ endif
+
+" -----------------------------------------------------------------------------
+" NERDTree
+" -----------------------------------------------------------------------------
+" Quit if NERDTree is the only open window
+autocmd bufenter *
+  \ if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) |
+  \   quit |
+  \ endif
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter *
+  \ if argc() == 0 && !exists("s:std_in") && exists(':NERDTree') |
+  \   NERDTree |
+  \ endif
+let g:NERDTreeQuitOnOpen=1
+let g:NERDTreeGitStatusShowIgnored = 1
+map <leader>t :NERDTreeToggle<CR>
+
+" -----------------------------------------------------------------------------
+" fish
+" -----------------------------------------------------------------------------
+autocmd FileType fish call SetRustOptions()
+function! SetRustOptions()
+  compiler fish
+  setlocal colorcolumn=80
+  setlocal expandtab
+  setlocal tabstop=4
+  setlocal softtabstop=4
+  setlocal shiftwidth=4
+  setlocal textwidth=79
+  setlocal foldmethod=expr
+endfunction
+
+" -----------------------------------------------------------------------------
+" Rust
+" -----------------------------------------------------------------------------
+autocmd FileType rust call SetRustOptions()
+function! SetRustOptions()
+  let b:ale_enabled = 0
+  let b:ale_fixers = {'rust': ['rustfmt']}
+  let b:ale_fix_on_save = 1
+  let b:ale_linters = {'rust': ['rls']}
+  setlocal colorcolumn=80
+  setlocal expandtab
+  setlocal tabstop=4
+  setlocal softtabstop=4
+  setlocal shiftwidth=4
+endfunction
+
+" -----------------------------------------------------------------------------
+" Go
+" -----------------------------------------------------------------------------
+" let g:go_autodetect_gopath = 1
+" let $GOBIN = $HOME . '/opt/arch/' . arch . '/golang/bin'
+autocmd FileType go call SetGoOptions()
+function! SetGoOptions()
+  let b:ale_fixers = {'go': ['gofmt']}
+  let b:ale_fix_on_save = 1
+  let b:ale_linters = {'go': ['govet', 'golint', 'gofmt']}
+  " let b:ale_linters = {'go': ['gopls']}
+  setlocal colorcolumn=80
+  setlocal expandtab
+  setlocal tabstop=4
+  setlocal softtabstop=4
+  setlocal shiftwidth=4
+endfunction
+
+" -----------------------------------------------------------------------------
+" CPP
+" -----------------------------------------------------------------------------
+autocmd FileType cpp call SetCPPOptions()
+function! SetCPPOptions()
+  setlocal colorcolumn=80
+  ClangFormatAutoEnable
+endfunction
+
+" -----------------------------------------------------------------------------
+" Python
+" -----------------------------------------------------------------------------
+autocmd FileType python call SetPythonOptions()
+function! SetPythonOptions()
+  let b:ale_fixers = {'python': ['black', 'isort']}
+  let b:ale_fix_on_save = 1
+  let b:ale_linters = {'python': ['flake8', 'mypy']}
+  setlocal colorcolumn=80
+  setlocal expandtab
+  setlocal tabstop=4
+  setlocal softtabstop=4
+  setlocal shiftwidth=4
+  " setlocal formatoptions-=t
+
+  " pip install flake8 flake8-import-order flake8-import-style \
+  "     flake8-logging-format flake8-mock flake8-quotes pylint autopep8 yapf
+  " let b:ale_python_flake8_options="
+  "   \ --enable-extensions=G --max-line-length=120 --inline-quotes=double"
+  " let b:ale_python_pylint_options="
+  "   \ --max-line-length=120"
+endfunction
