@@ -189,6 +189,18 @@ function! SetGoOptions()
 endfunction
 
 " -----------------------------------------------------------------------------
+" Puppet
+" -----------------------------------------------------------------------------
+autocmd FileType puppet call SetPuppetOptions()
+function! SetPuppetOptions()
+  setlocal colorcolumn=80
+  setlocal expandtab
+  setlocal tabstop=2
+  setlocal softtabstop=2
+  setlocal shiftwidth=2
+endfunction
+
+" -----------------------------------------------------------------------------
 " CPP
 " -----------------------------------------------------------------------------
 autocmd FileType cpp call SetCPPOptions()
