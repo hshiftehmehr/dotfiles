@@ -189,6 +189,29 @@ function! SetGoOptions()
 endfunction
 
 " -----------------------------------------------------------------------------
+" YAML
+" -----------------------------------------------------------------------------
+autocmd FileType yaml call SetYAMLOptions()
+function! SetYAMLOptions()
+  setlocal colorcolumn=80
+  setlocal expandtab
+  setlocal tabstop=2
+  setlocal softtabstop=2
+  setlocal shiftwidth=2
+  let b:ale_yaml_yamllint_options="--config-data '
+    \ {
+    \   extends: default,
+    \   rules: {
+    \     line-length: {
+    \       max: 120,
+    \       level: warning
+    \     }
+    \   }
+    \ }
+    \'"
+endfunction
+
+" -----------------------------------------------------------------------------
 " Puppet
 " -----------------------------------------------------------------------------
 autocmd FileType puppet call SetPuppetOptions()
