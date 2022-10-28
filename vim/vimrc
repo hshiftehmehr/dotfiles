@@ -52,6 +52,8 @@ Plugin 'dense-analysis/ale'
 
 Plugin 'fatih/vim-go'
 
+Plugin 'google/vim-jsonnet'
+
 Plugin 'rust-lang/rust.vim'
 
 Plugin 'rodjek/vim-puppet'
