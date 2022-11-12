@@ -28,6 +28,8 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
+Plugin 'wfxr/minimap.vim',
+
 Plugin 'ctrlpvim/ctrlp.vim'
 
 Plugin 'scrooloose/nerdtree'
@@ -41,6 +43,7 @@ Plugin 'michaeljsmith/vim-indent-object'
 
 Plugin 'tomtom/tcomment_vim'
 
+Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
 
 Plugin 'tpope/vim-surround'
@@ -71,6 +74,10 @@ filetype plugin indent on    " required
 let g:airline#extensions#tabline#enabled = 1
 let g:ale_completion_enabled = 1
 
+let g:minimap_auto_start = 1
+let g:minimap_git_colors = 1
+let g:minimap_highlight_search = 1
+
 " -----------------------------------------------------------------------------
 " Local config
 " -----------------------------------------------------------------------------
@@ -96,6 +103,7 @@ set backspace=indent,eol,start
 set relativenumber
 set number
 set colorcolumn=80
+set updatetime=500 " This is for gitgutter
 
 syntax on
 set background=dark
