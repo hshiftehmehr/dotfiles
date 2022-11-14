@@ -71,13 +71,6 @@ Plugin 'nanotech/jellybeans.vim'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-let g:airline#extensions#tabline#enabled = 1
-let g:ale_completion_enabled = 1
-
-let g:minimap_auto_start = 1
-let g:minimap_git_colors = 1
-let g:minimap_highlight_search = 1
-
 " -----------------------------------------------------------------------------
 " Local config
 " -----------------------------------------------------------------------------
@@ -108,7 +101,7 @@ set updatetime=500 " This is for gitgutter
 syntax on
 set background=dark
 highlight clear SpellBad
-highlight SpellBad cterm=underline
+highlight SpellBad cterm=underline,bold
 
 vnoremap < <gv
 vnoremap > >gv
@@ -116,6 +109,19 @@ vnoremap > >gv
 execute ':silent !mkdir -p ~/.vim/swap-files'
 set swapfile
 set dir=~/.vim/swap-files
+
+let g:airline#extensions#tabline#enabled = 1
+let g:ale_completion_enabled = 1
+
+let g:minimap_auto_start = 1
+let g:minimap_git_colors = 1
+let g:minimap_highlight_search = 1
+
+let g:gitgutter_highlight_lines = 1
+highlight GitGutterAddLine ctermbg=black
+highlight GitGutterChangeLine ctermbg=black
+highlight GitGutterDeleteLine ctermbg=black
+highlight GitGutterChangeDeleteLine ctermbg=black
 
 " Auto-reload vimrc
 augroup MYVIMRC
