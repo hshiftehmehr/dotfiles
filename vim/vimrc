@@ -122,6 +122,7 @@ highlight GitGutterAddLine ctermbg=black
 highlight GitGutterChangeLine ctermbg=black
 highlight GitGutterDeleteLine ctermbg=black
 highlight GitGutterChangeDeleteLine ctermbg=black
+highlight CursorLine ctermbg=236
 highlight ColorColumn ctermbg=233
 highlight Normal ctermbg=234
 
