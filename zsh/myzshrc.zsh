@@ -1,7 +1,9 @@
 # if "brew" is installed, prioritize its packages in PATH
 if type brew > /dev/null; then
 	BREW_PREFIX=$(brew --prefix)
+	BREW_ZSH_FPATH="$BREW_PREFIX/share/zsh/site-functions"
 	[[ :$PATH: == :$BREW_PREFIX/bin:* ]] || PATH=$BREW_PREFIX/bin:$PATH
+	[[ :$PATH: == :$BREW_ZSH_FPATH:* ]] || FPATH="${BREW_ZSH_FPATH}:${FPATH}"
 fi
 
 # Look at my local in folder first
@@ -65,3 +67,6 @@ PROMPT_CLI=$PROMPT'%{$fg_bold[green]%}>%{$reset_color%} '
 PROMPT=$PROMPT_EXIT_CODE$PROMPT_SEPARATOR$PROMPT_CWD$PROMPT_CLI
 
 chpwd_update_repo_path
+
+autoload -Uz compinit
+compinit
