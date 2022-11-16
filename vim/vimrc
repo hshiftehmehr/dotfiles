@@ -144,6 +144,20 @@ autocmd BufReadPost *
   \   execute "normal! g`\"" |
   \ endif
 
+
+" -----------------------------------------------------------------------------
+" Common options set and possible overridden by other file types
+" -----------------------------------------------------------------------------
+function SetCommonOptions(indent = 4)
+  let &l:colorcolumn=80
+  let &l:tabstop=a:indent
+  let &l:softtabstop=a:indent
+  let &l:shiftwidth=a:indent
+  setlocal expandtab
+endfunction 
+
+call SetCommonOptions()
+
 " -----------------------------------------------------------------------------
 " NERDTree
 " -----------------------------------------------------------------------------
@@ -164,14 +178,10 @@ map <leader>t :NERDTreeToggle<CR>
 " -----------------------------------------------------------------------------
 " fish
 " -----------------------------------------------------------------------------
-autocmd FileType fish call SetRustOptions()
-function! SetRustOptions()
+autocmd FileType fish call SetFishOptions()
+function! SetFishOptions()
+  call SetCommonOptions()
   compiler fish
-  setlocal colorcolumn=80
-  setlocal expandtab
-  setlocal tabstop=4
-  setlocal softtabstop=4
-  setlocal shiftwidth=4
   setlocal textwidth=79
   setlocal foldmethod=expr
 endfunction
@@ -181,15 +191,11 @@ endfunction
 " -----------------------------------------------------------------------------
 autocmd FileType rust call SetRustOptions()
 function! SetRustOptions()
+  call SetCommonOptions()
   let b:ale_enabled = 0
   let b:ale_fixers = {'rust': ['rustfmt']}
   let b:ale_fix_on_save = 1
   let b:ale_linters = {'rust': ['rls']}
-  setlocal colorcolumn=80
-  setlocal expandtab
-  setlocal tabstop=4
-  setlocal softtabstop=4
-  setlocal shiftwidth=4
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -199,15 +205,11 @@ endfunction
 " let $GOBIN = $HOME . '/opt/arch/' . arch . '/golang/bin'
 autocmd FileType go call SetGoOptions()
 function! SetGoOptions()
+  call SetCommonOptions()
   let b:ale_fixers = {'go': ['gofmt']}
   let b:ale_fix_on_save = 1
   let b:ale_linters = {'go': ['govet', 'golint', 'gofmt']}
   " let b:ale_linters = {'go': ['gopls']}
-  setlocal colorcolumn=80
-  setlocal expandtab
-  setlocal tabstop=4
-  setlocal softtabstop=4
-  setlocal shiftwidth=4
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -215,11 +217,7 @@ endfunction
 " -----------------------------------------------------------------------------
 autocmd FileType yaml call SetYAMLOptions()
 function! SetYAMLOptions()
-  setlocal colorcolumn=80
-  setlocal expandtab
-  setlocal tabstop=2
-  setlocal softtabstop=2
-  setlocal shiftwidth=2
+  call SetCommonOptions(2)
   let b:ale_yaml_yamllint_options="--config-data '
     \ {
     \   extends: default,
@@ -238,11 +236,7 @@ endfunction
 " -----------------------------------------------------------------------------
 autocmd FileType puppet call SetPuppetOptions()
 function! SetPuppetOptions()
-  setlocal colorcolumn=80
-  setlocal expandtab
-  setlocal tabstop=2
-  setlocal softtabstop=2
-  setlocal shiftwidth=2
+  call SetCommonOptions(2)
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -250,6 +244,7 @@ endfunction
 " -----------------------------------------------------------------------------
 autocmd FileType cpp call SetCPPOptions()
 function! SetCPPOptions()
+  call SetCommonOptions()
   setlocal colorcolumn=80
   ClangFormatAutoEnable
 endfunction
@@ -259,14 +254,10 @@ endfunction
 " -----------------------------------------------------------------------------
 autocmd FileType python call SetPythonOptions()
 function! SetPythonOptions()
+  call SetCommonOptions()
   let b:ale_fixers = {'python': ['black', 'isort']}
   let b:ale_fix_on_save = 1
   let b:ale_linters = {'python': ['flake8', 'mypy']}
-  setlocal colorcolumn=80
-  setlocal expandtab
-  setlocal tabstop=4
-  setlocal softtabstop=4
-  setlocal shiftwidth=4
   " setlocal formatoptions-=t
 
   " pip install flake8 flake8-import-order flake8-import-style \
