@@ -49,9 +49,11 @@ add-zsh-hook chpwd chpwd_update_repo_path
 case $(uname -s) in
 	Linux)
 		HOST_SYMBOL='🐧'
+        alias ls='ls --color --classify'
 		;;
 	Darwin)
 		HOST_SYMBOL=''
+        alias ls='ls -FG'
 		;;
 	*)
 		HOST_SYMBOL=$(hostname -s)
