@@ -218,6 +218,8 @@ endfunction
 autocmd FileType yaml call SetYAMLOptions()
 function! SetYAMLOptions()
   call SetCommonOptions(2)
+  let b:ale_fixers = {'yaml': ['prettier']}
+  let b:ale_fix_on_save = 1
   let b:ale_yaml_yamllint_options="--config-data '
     \ {
     \   extends: default,
@@ -229,6 +231,26 @@ function! SetYAMLOptions()
     \   }
     \ }
     \'"
+endfunction
+
+" -----------------------------------------------------------------------------
+" JSON
+" -----------------------------------------------------------------------------
+autocmd FileType json call SetJSONOptions()
+function! SetJSONOptions()
+  call SetCommonOptions(2)
+  let b:ale_fixers = {'json': ['prettier']}
+  let b:ale_fix_on_save = 1
+endfunction
+
+" -----------------------------------------------------------------------------
+" Markdown
+" -----------------------------------------------------------------------------
+autocmd FileType json call SetMarkdownptions()
+function! SetMarkdownOptions()
+  call SetCommonOptions()
+  let b:ale_fixers = {'markdown': ['prettier']}
+  let b:ale_fix_on_save = 1
 endfunction
 
 " -----------------------------------------------------------------------------
