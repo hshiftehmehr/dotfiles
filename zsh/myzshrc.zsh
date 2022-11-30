@@ -24,7 +24,7 @@ function cwd_git_prefix() {
 }
 
 function cwd_git_branch() {
-	GIT_BRANCH=$(git branch 2>/dev/null | cat) || ""
+	GIT_BRANCH=$(git branch 2>/dev/null | head -n 1 | sed 's/\*\s*//g') || ""
 	if [ -z $GIT_BRANCH ]; then
 		echo ""
 	else
