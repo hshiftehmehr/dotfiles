@@ -208,8 +208,7 @@ function! SetGoOptions()
   call SetCommonOptions()
   let b:ale_fixers = {'go': ['gofmt']}
   let b:ale_fix_on_save = 1
-  let b:ale_linters = {'go': ['govet', 'golint', 'gofmt']}
-  " let b:ale_linters = {'go': ['gopls']}
+  let b:ale_linters = {'go': ['golangci-lint']}
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -246,7 +245,7 @@ endfunction
 " -----------------------------------------------------------------------------
 " Markdown
 " -----------------------------------------------------------------------------
-autocmd FileType json call SetMarkdownptions()
+autocmd FileType markdown call SetMarkdownOptions()
 function! SetMarkdownOptions()
   call SetCommonOptions()
   let b:ale_fixers = {'markdown': ['prettier']}
