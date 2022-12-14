@@ -9,6 +9,13 @@ fi
 # Look at my local in folder first
 [[ :$PATH: == :$HOME/bin:* ]] || PATH=$HOME/bin:$PATH
 
+ARCH=$(uname -m)
+OPT=${HOME}/opt
+for ITEM in ${OPT}/arch/${ARCH}/*
+do
+	[[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
+done
+
 if type vim > /dev/null; then
 	export EDITOR=vim
 fi
@@ -63,7 +70,7 @@ setopt prompt_subst
 autoload -U colors && colors
 
 PROMPT_EXIT_CODE='%(?..%{$fg_bold[red]%}[exit code %?]%{$reset_color%}${_newline})'
-PROMPT_SEPARATOR='%{$fg[faint_white]%}${(r:$COLUMNS::- :)}%{$reset_color%}${_newline}'
+PROMPT_SEPARATOR='%{$fg[faint_white]%}${(r:$COLUMNS::. :)}%{$reset_color%}${_newline}'
 PROMPT_CWD=$PROMPT'$HOST_SYMBOL $CWD_REPO_TOPLEVEL$CWD_GIT_BRANCH$CWD_REPO_SUFFIX${_newline}'
 PROMPT_CLI=$PROMPT'%{$fg_bold[green]%}>%{$reset_color%} '
 PROMPT=$PROMPT_EXIT_CODE$PROMPT_SEPARATOR$PROMPT_CWD$PROMPT_CLI

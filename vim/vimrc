@@ -113,7 +113,11 @@ set dir=~/.vim/swap-files
 let g:airline#extensions#tabline#enabled = 1
 let g:ale_completion_enabled = 1
 
-let g:minimap_auto_start = 1
+if (&diff)
+    let g:minimap_auto_start = 0
+else
+    let g:minimap_auto_start = 1
+endif
 let g:minimap_git_colors = 1
 let g:minimap_highlight_search = 1
 
@@ -230,6 +234,15 @@ function! SetYAMLOptions()
     \   }
     \ }
     \'"
+endfunction
+
+" -----------------------------------------------------------------------------
+" JSONNET
+" -----------------------------------------------------------------------------
+autocmd FileType jsonnet call SetJSONNETOptions()
+function! SetJSONNETOptions()
+  call SetCommonOptions(2)
+  let b:ale_fix_on_save = 1
 endfunction
 
 " -----------------------------------------------------------------------------
