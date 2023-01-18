@@ -180,14 +180,12 @@ let g:NERDTreeGitStatusShowIgnored = 1
 map <leader>t :NERDTreeToggle<CR>
 
 " -----------------------------------------------------------------------------
-" fish
+" JSONNET
 " -----------------------------------------------------------------------------
-autocmd FileType fish call SetFishOptions()
-function! SetFishOptions()
+autocmd FileType jsonnet call SetJSONNETOptions()
+function! SetJSONNETOptions()
   call SetCommonOptions()
-  compiler fish
-  setlocal textwidth=79
-  setlocal foldmethod=expr
+  let b:ale_fix_on_save = 1
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -196,10 +194,7 @@ endfunction
 autocmd FileType rust call SetRustOptions()
 function! SetRustOptions()
   call SetCommonOptions()
-  let b:ale_enabled = 0
-  let b:ale_fixers = {'rust': ['rustfmt']}
   let b:ale_fix_on_save = 1
-  let b:ale_linters = {'rust': ['rls']}
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -210,9 +205,7 @@ endfunction
 autocmd FileType go call SetGoOptions()
 function! SetGoOptions()
   call SetCommonOptions()
-  let b:ale_fixers = {'go': ['gofmt']}
   let b:ale_fix_on_save = 1
-  let b:ale_linters = {'go': ['golangci-lint']}
 endfunction
 
 " -----------------------------------------------------------------------------
@@ -221,7 +214,7 @@ endfunction
 autocmd FileType yaml call SetYAMLOptions()
 function! SetYAMLOptions()
   call SetCommonOptions(2)
-  let b:ale_fixers = {'yaml': ['prettier']}
+  " let b:ale_fixers = {'yaml': ['prettier']}
   let b:ale_fix_on_save = 1
   let b:ale_yaml_yamllint_options="--config-data '
     \ {
@@ -251,7 +244,6 @@ endfunction
 autocmd FileType json call SetJSONOptions()
 function! SetJSONOptions()
   call SetCommonOptions(2)
-  let b:ale_fixers = {'json': ['prettier']}
   let b:ale_fix_on_save = 1
 endfunction
 
@@ -261,7 +253,6 @@ endfunction
 autocmd FileType markdown call SetMarkdownOptions()
 function! SetMarkdownOptions()
   call SetCommonOptions()
-  let b:ale_fixers = {'markdown': ['prettier']}
   let b:ale_fix_on_save = 1
 endfunction
 
@@ -289,9 +280,7 @@ endfunction
 autocmd FileType python call SetPythonOptions()
 function! SetPythonOptions()
   call SetCommonOptions()
-  let b:ale_fixers = {'python': ['black', 'isort']}
   let b:ale_fix_on_save = 1
-  let b:ale_linters = {'python': ['flake8', 'mypy']}
   " setlocal formatoptions-=t
 
   " pip install flake8 flake8-import-order flake8-import-style \
