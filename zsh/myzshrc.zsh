@@ -20,10 +20,14 @@ fi
 
 ARCH=$(uname -m)
 OPT=${HOME}/opt
-for ITEM in ${OPT}/arch/${ARCH}/*
-do
-	[[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
-done
+if [ -d "${OPT}/arch/${ARCH}" ]; then
+	for ITEM in ${OPT}/arch/${ARCH}/*
+	do
+		if [ -d "$ITEM/bin" ]; then
+			[[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
+		fi
+	done
+fi
 
 if type vim > /dev/null; then
 	export EDITOR=vim
