@@ -9,6 +9,15 @@ fi
 # Look at my local in folder first
 [[ :$PATH: == :$HOME/bin:* ]] || PATH=$HOME/bin:$PATH
 
+MY_SSH_AUTH_SOCK=$HOME/.ssh/ssh_auth_sock
+if [ -S "$SSH_AUTH_SOCK" ] && [ "$MY_SSH_AUTH_SOCK" != "$SSH_AUTH_SOCK" ]; then
+	ln -sf "$SSH_AUTH_SOCK" "$MY_SSH_AUTH_SOCK"
+fi
+if tmux show-environment -g SSH_AUTH_SOCK &> /dev/null; then
+	eval $(tmux show-environment -g SSH_AUTH_SOCK)
+	export SSH_AUTH_SOCK
+fi
+
 ARCH=$(uname -m)
 OPT=${HOME}/opt
 for ITEM in ${OPT}/arch/${ARCH}/*
