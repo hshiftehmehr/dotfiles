@@ -1,9 +1,9 @@
 # if "brew" is installed, prioritize its packages in PATH
 if type brew > /dev/null; then
-	BREW_PREFIX=$(brew --prefix)
-	BREW_ZSH_FPATH="$BREW_PREFIX/share/zsh/site-functions"
-	[[ :$PATH: == :$BREW_PREFIX/bin:* ]] || PATH=$BREW_PREFIX/bin:$PATH
-	[[ :$PATH: == :$BREW_ZSH_FPATH:* ]] || FPATH="${BREW_ZSH_FPATH}:${FPATH}"
+    BREW_PREFIX=$(brew --prefix)
+    BREW_ZSH_FPATH="$BREW_PREFIX/share/zsh/site-functions"
+    [[ :$PATH: == :$BREW_PREFIX/bin:* ]] || PATH=$BREW_PREFIX/bin:$PATH
+    [[ :$PATH: == :$BREW_ZSH_FPATH:* ]] || FPATH="${BREW_ZSH_FPATH}:${FPATH}"
 fi
 
 # Look at my local in folder first
@@ -11,51 +11,51 @@ fi
 
 MY_SSH_AUTH_SOCK=$HOME/.ssh/ssh_auth_sock
 if [ -S "$SSH_AUTH_SOCK" ] && [ "$MY_SSH_AUTH_SOCK" != "$SSH_AUTH_SOCK" ]; then
-	ln -sf "$SSH_AUTH_SOCK" "$MY_SSH_AUTH_SOCK"
+    ln -sf "$SSH_AUTH_SOCK" "$MY_SSH_AUTH_SOCK"
 fi
 if tmux show-environment -g SSH_AUTH_SOCK &> /dev/null; then
-	eval $(tmux show-environment -g SSH_AUTH_SOCK)
-	export SSH_AUTH_SOCK
+    eval $(tmux show-environment -g SSH_AUTH_SOCK)
+    export SSH_AUTH_SOCK
 fi
 
 ARCH=$(uname -m)
 OPT=${HOME}/opt
 if [ -d "${OPT}/arch/${ARCH}" ]; then
-	for ITEM in ${OPT}/arch/${ARCH}/*
-	do
-		if [ -d "$ITEM/bin" ]; then
-			[[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
-		fi
-	done
+    for ITEM in ${OPT}/arch/${ARCH}/*
+    do
+        if [ -d "$ITEM/bin" ]; then
+            [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
+        fi
+    done
 fi
 
 if type vim > /dev/null; then
-	export EDITOR=vim
+    export EDITOR=vim
 fi
 
 function cwd_toplevel() {
-	PREFIX=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-	echo ${PREFIX//$HOME/'~'}
+    PREFIX=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+    echo ${PREFIX//$HOME/'~'}
 }
 
 function cwd_git_prefix() {
-	GIT_PREFIX=$(git rev-parse --show-prefix 2>/dev/null)
-	echo /$GIT_PREFIX
+    GIT_PREFIX=$(git rev-parse --show-prefix 2>/dev/null)
+    echo /$GIT_PREFIX
 }
 
 function cwd_git_branch() {
-	GIT_BRANCH=$(git branch 2>/dev/null | head -n 1 | sed 's/\*\s*//g') || ""
-	if [ -z $GIT_BRANCH ]; then
-		echo ""
-	else
-		echo "[%{$fg[magenta]%}$GIT_BRANCH%{$reset_color%}]"
-	fi
+    GIT_BRANCH=$(git branch 2>/dev/null | head -n 1 | sed 's/\*\s*//g') || ""
+    if [ -z $GIT_BRANCH ]; then
+        echo ""
+    else
+        echo "[%{$fg[magenta]%}$GIT_BRANCH%{$reset_color%}]"
+    fi
 }
 
 function chpwd_update_repo_path() {
-	CWD_REPO_TOPLEVEL=$(cwd_toplevel)
-	CWD_REPO_SUFFIX=$(cwd_git_prefix)
-	CWD_GIT_BRANCH=$(cwd_git_branch)
+    CWD_REPO_TOPLEVEL=$(cwd_toplevel)
+    CWD_REPO_SUFFIX=$(cwd_git_prefix)
+    CWD_GIT_BRANCH=$(cwd_git_branch)
 }
 
 _newline=$'\n'
@@ -67,16 +67,16 @@ autoload -U add-zsh-hook
 add-zsh-hook chpwd chpwd_update_repo_path
 
 case $(uname -s) in
-	Linux)
-		HOST_SYMBOL='🐧'
+    Linux)
+        HOST_SYMBOL='🐧'
         alias ls='ls --color --classify'
-		;;
-	Darwin)
-		HOST_SYMBOL=''
+        ;;
+    Darwin)
+        HOST_SYMBOL=''
         alias ls='ls -FG'
-		;;
-	*)
-		HOST_SYMBOL=$(hostname -s)
+        ;;
+    *)
+        HOST_SYMBOL=$(hostname -s)
 esac
 
 setopt prompt_subst
