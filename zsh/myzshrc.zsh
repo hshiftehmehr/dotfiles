@@ -35,7 +35,7 @@ fi
 
 function cwd_toplevel() {
     PREFIX=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-    echo "${PREFIX//$HOME/'~'}"
+    echo "${PREFIX//$HOME/~}"
 }
 
 function cwd_git_prefix() {
@@ -48,7 +48,7 @@ function cwd_git_branch() {
     if [ -z "$GIT_BRANCH" ]; then
         echo ""
     else
-        echo '[%{$fg[magenta]%}'$GIT_BRANCH'%{$reset_color%}]'
+        echo "[%{$fg[magenta]%}$GIT_BRANCH%{$reset_color%}]"
     fi
 }
 
