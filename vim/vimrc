@@ -10,7 +10,7 @@ let arch = substitute(system('uname -m'), '\n', '', '')
 
 " A bunch of vim stuff depend on more POSIX compliance than fish provides
 if &shell =~# 'fish$'
-  set shell=sh
+  set shell=bash
 endif
 
 " -----------------------------------------------------------------------------
@@ -178,6 +178,17 @@ autocmd VimEnter *
 let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeGitStatusShowIgnored = 1
 map <leader>t :NERDTreeToggle<CR>
+
+" -----------------------------------------------------------------------------
+" ZSH
+" -----------------------------------------------------------------------------
+autocmd FileType zsh call SetZSHOptions()
+function! SetZSHOptions()
+  call SetCommonOptions()
+  let b:is_bash = 1
+  let b:ale_linters = {'zsh': ['shellcheck']}
+  let b:ale_fix_on_save = 1
+endfunction
 
 " -----------------------------------------------------------------------------
 " JSONNET

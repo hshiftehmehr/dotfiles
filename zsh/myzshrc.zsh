@@ -14,14 +14,14 @@ if [ -S "$SSH_AUTH_SOCK" ] && [ "$MY_SSH_AUTH_SOCK" != "$SSH_AUTH_SOCK" ]; then
     ln -sf "$SSH_AUTH_SOCK" "$MY_SSH_AUTH_SOCK"
 fi
 if tmux show-environment -g SSH_AUTH_SOCK &> /dev/null; then
-    eval $(tmux show-environment -g SSH_AUTH_SOCK)
+    eval "$(tmux show-environment -g SSH_AUTH_SOCK)"
     export SSH_AUTH_SOCK
 fi
 
 ARCH=$(uname -m)
 OPT=${HOME}/opt
 if [ -d "${OPT}/arch/${ARCH}" ]; then
-    for ITEM in ${OPT}/arch/${ARCH}/*
+    for ITEM in "${OPT}/arch/${ARCH}"/*
     do
         if [ -d "$ITEM/bin" ]; then
             [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
@@ -35,20 +35,20 @@ fi
 
 function cwd_toplevel() {
     PREFIX=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-    echo ${PREFIX//$HOME/'~'}
+    echo "${PREFIX//$HOME/'~'}"
 }
 
 function cwd_git_prefix() {
     GIT_PREFIX=$(git rev-parse --show-prefix 2>/dev/null)
-    echo /$GIT_PREFIX
+    echo "/$GIT_PREFIX"
 }
 
 function cwd_git_branch() {
-    GIT_BRANCH=$(git branch 2>/dev/null | head -n 1 | sed 's/\*\s*//g') || ""
-    if [ -z $GIT_BRANCH ]; then
+    GIT_BRANCH="$(git branch 2>/dev/null | head -n 1 | sed 's/\*\s*//g')" || "$(echo -n '')"
+    if [ -z "$GIT_BRANCH" ]; then
         echo ""
     else
-        echo "[%{$fg[magenta]%}$GIT_BRANCH%{$reset_color%}]"
+        echo '[%{$fg[magenta]%}'$GIT_BRANCH'%{$reset_color%}]'
     fi
 }
 
@@ -56,6 +56,9 @@ function chpwd_update_repo_path() {
     CWD_REPO_TOPLEVEL=$(cwd_toplevel)
     CWD_REPO_SUFFIX=$(cwd_git_prefix)
     CWD_GIT_BRANCH=$(cwd_git_branch)
+    export CWD_REPO_TOPLEVEL
+    export CWD_REPO_SUFFIX
+    export CWD_GIT_BRANCH
 }
 
 _newline=$'\n'
@@ -77,6 +80,7 @@ case $(uname -s) in
         ;;
     *)
         HOST_SYMBOL=$(hostname -s)
+        export HOST_SYMBOL
 esac
 
 setopt prompt_subst
