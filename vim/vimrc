@@ -32,8 +32,8 @@ Plugin 'wfxr/minimap.vim',
 
 Plugin 'ctrlpvim/ctrlp.vim'
 
-Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
+" Plugin 'scrooloose/nerdtree'
+" Plugin 'Xuyuanp/nerdtree-git-plugin'
 
 Plugin 'Yggdroot/indentLine'
 
@@ -97,6 +97,8 @@ set relativenumber
 set number
 set colorcolumn=80
 set updatetime=500 " This is for gitgutter
+set foldmethod=syntax
+set nofoldenable
 
 syntax on
 set background=dark
@@ -217,6 +219,8 @@ autocmd FileType go call SetGoOptions()
 function! SetGoOptions()
   call SetCommonOptions()
   let b:ale_fix_on_save = 1
+  let b:ale_linters = {'go': ['golangci-lint']}
+  let b:ale_go_golangci_lint_options=""
 endfunction
 
 " -----------------------------------------------------------------------------
