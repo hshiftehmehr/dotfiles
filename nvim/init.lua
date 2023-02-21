@@ -1,5 +1,6 @@
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
+-- vim.opt.background = "dark"
 vim.opt.colorcolumn = "80"
 vim.opt.cursorline = true
 vim.opt.expandtab = true
@@ -143,12 +144,40 @@ lazy.setup({
 		},
 	},
 	{
+		"nvim-tree/nvim-tree.lua",
+		opts = {
+			update_focused_file = {
+				enable = true,
+				update_root = true,
+			},
+			renderer = {
+				icons = {
+					show = {
+						file = false,
+						folder = false,
+						folder_arrow = false,
+						git = false,
+						modified = false,
+					},
+				},
+			},
+		},
+	},
+	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = {
 			{ "nvim-lua/plenary.nvim" },
 			{ "BurntSushi/ripgrep" },
-			{ "natecraddock/workspaces.nvim", config = true },
+			{
+				"natecraddock/workspaces.nvim",
+				opts = {
+					hooks = {
+						open = "NvimTreeOpen",
+					},
+				},
+			},
 			{ "nvim-telescope/telescope-github.nvim" },
+			{ "nvim-telescope/telescope-file-browser.nvim" },
 		},
 		config = function()
 			local telescope = require("telescope")
@@ -161,9 +190,13 @@ lazy.setup({
 				},
 			})
 			telescope.load_extension("workspaces")
+			telescope.load_extension("file_browser")
 
 			vim.keymap.set("n", "<leader>ws", telescope.extensions.workspaces.workspaces, {})
 			vim.keymap.set("n", "<leader>pr", telescope.extensions.gh.pull_request, {})
+			vim.keymap.set("n", "<leader>ls", function()
+				telescope.extensions.file_browser.file_browser({ dir_icon = "/" })
+			end, {})
 			vim.keymap.set("n", "<leader>git", builtin.git_status, {})
 			vim.keymap.set("n", "<leader>br", function()
 				builtin.git_branches({ show_remote_tracking_branches = false })
@@ -173,16 +206,31 @@ lazy.setup({
 			vim.keymap.set("n", "<leader>g", builtin.live_grep, {})
 		end,
 	},
+	{
+		"akinsho/toggleterm.nvim",
+		config = function()
+			local Terminal = require("toggleterm.terminal").Terminal
+			vim.keymap.set("n", "<leader>sh", function()
+				Terminal:new({ direction = "horizontal" }):toggle()
+			end)
+		end,
+	},
 	{ "tomtom/tcomment_vim" },
 	{ "google/vim-jsonnet" },
-	{ "lewis6991/gitsigns.nvim", config = true },
-	{ "gorbit99/codewindow.nvim", opts = { auto_enable = true } },
+	{
+		"lewis6991/gitsigns.nvim",
+		config = function()
+			require("gitsigns").setup()
+			require("scrollbar.handlers.gitsigns").setup()
+		end,
+		dependencies = { { "petertriho/nvim-scrollbar", config = true } },
+	},
 })
 
 vim.api.nvim_create_autocmd("FileType", {
 	desc = "Lua specific editor options",
 	pattern = { "lua" },
-	callback = function(opts)
+	callback = function()
 		vim.opt_local.expandtab = false
 	end,
 })
@@ -190,7 +238,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	desc = "JSON/YAML specific editor options",
 	pattern = { "jsonnet", "json", "yaml" },
-	callback = function(opts)
+	callback = function()
 		vim.opt.shiftwidth = 2
 		vim.opt.tabstop = 2
 	end,
