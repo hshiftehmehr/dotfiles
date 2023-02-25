@@ -11,6 +11,24 @@ vim.opt.spell = true
 vim.opt.syntax = "enable"
 vim.opt.tabstop = 4
 
+if vim.g.neovide then
+	vim.cmd([[ cd ~/Repositories/ ]])
+	vim.g.neovide_fullscreen = true
+	vim.g.neovide_input_use_logo = true -- enable use of the logo (cmd) key
+	vim.keymap.set("v", "<D-c>", '"+y') -- Copy
+	vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
+	vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
+	vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
+	vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
+end
+
+-- Allow clipboard copy paste in neovim
+vim.g.neovide_input_use_logo = true
+vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+
 vim.api.nvim_create_autocmd("BufRead", {
 	command = [[
         if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$")
@@ -85,6 +103,7 @@ lazy.setup({
 				sources = {
 					null_ls.builtins.formatting.stylua,
 					null_ls.builtins.completion.spell,
+					null_ls.builtins.formatting.prettier,
 				},
 				-- https://github.com/jose-elias-alvarez/null-ls.nvim/wiki/Formatting-on-save
 				on_attach = function(client, bufnr)
@@ -135,33 +154,69 @@ lazy.setup({
 			},
 		},
 		opts = {
-			options = {
-				icons_enabled = false,
-				theme = "onedark",
-				section_separators = "",
-				component_separators = "",
-			},
+			options = (function()
+				if vim.g.neovide then
+					return {
+						theme = "onedark",
+					}
+				else
+					return {
+						theme = "onedark",
+						icons_enabled = false,
+						section_separators = "",
+						component_separators = "",
+					}
+				end
+			end)(),
 		},
 	},
 	{
 		"nvim-tree/nvim-tree.lua",
-		opts = {
-			update_focused_file = {
-				enable = true,
-				update_root = true,
-			},
-			renderer = {
-				icons = {
-					show = {
-						file = false,
-						folder = false,
-						folder_arrow = false,
-						git = false,
-						modified = false,
+		opts = (function()
+			vim.api.nvim_create_autocmd({ "VimEnter" }, {
+				callback = function(data)
+					-- buffer is a real file on the disk
+					local real_file = vim.fn.filereadable(data.file) == 1
+
+					-- buffer is a [No Name]
+					local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
+
+					if not real_file and not no_name then
+						return
+					end
+
+					-- open the tree, find the file but don't focus it
+					require("nvim-tree.api").tree.toggle({ focus = false, find_file = true })
+				end,
+			})
+
+			if vim.g.neovide then
+				return {
+					update_focused_file = {
+						enable = true,
+						update_root = true,
 					},
-				},
-			},
-		},
+				}
+			else
+				return {
+					update_focused_file = {
+						enable = true,
+						update_root = true,
+					},
+					renderer = {
+						icons = {
+							show = {
+								file = false,
+								folder = false,
+								folder_arrow = false,
+								git = false,
+								modified = false,
+							},
+						},
+					},
+				}
+			end
+		end)(),
 	},
 	{
 		"nvim-telescope/telescope.nvim",
@@ -172,7 +227,7 @@ lazy.setup({
 				"natecraddock/workspaces.nvim",
 				opts = {
 					hooks = {
-						open = "NvimTreeOpen",
+						open = "Telescope find_files",
 					},
 				},
 			},
@@ -195,7 +250,13 @@ lazy.setup({
 			vim.keymap.set("n", "<leader>ws", telescope.extensions.workspaces.workspaces, {})
 			vim.keymap.set("n", "<leader>pr", telescope.extensions.gh.pull_request, {})
 			vim.keymap.set("n", "<leader>ls", function()
-				telescope.extensions.file_browser.file_browser({ dir_icon = "/" })
+				telescope.extensions.file_browser.file_browser((function()
+					if vim.g.neovide then
+						return nil
+					else
+						return { dir_icon = "/" }
+					end
+				end)())
 			end, {})
 			vim.keymap.set("n", "<leader>git", builtin.git_status, {})
 			vim.keymap.set("n", "<leader>br", function()
@@ -218,13 +279,26 @@ lazy.setup({
 	{ "tomtom/tcomment_vim" },
 	{ "google/vim-jsonnet" },
 	{
-		"lewis6991/gitsigns.nvim",
+		"petertriho/nvim-scrollbar",
 		config = function()
-			require("gitsigns").setup()
+			require("scrollbar").setup()
 			require("scrollbar.handlers.gitsigns").setup()
+			require("scrollbar.handlers.search").setup()
 		end,
-		dependencies = { { "petertriho/nvim-scrollbar", config = true } },
+		dependencies = {
+			{ "lewis6991/gitsigns.nvim",   config = true },
+			{ "kevinhwang91/nvim-hlslens", config = true },
+		},
 	},
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	nested = true,
+	callback = function()
+		if #vim.api.nvim_list_wins() == 1 and require("nvim-tree.utils").is_nvim_tree_buf() then
+			vim.cmd("quit")
+		end
+	end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
