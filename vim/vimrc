@@ -28,7 +28,8 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-Plugin 'wfxr/minimap.vim',
+Plugin 'obcat/vim-sclow'
+" Plugin 'wfxr/minimap.vim',
 
 Plugin 'ctrlpvim/ctrlp.vim'
 
@@ -114,14 +115,7 @@ set dir=~/.vim/swap-files
 
 let g:airline#extensions#tabline#enabled = 1
 let g:ale_completion_enabled = 1
-
-if (&diff)
-    let g:minimap_auto_start = 0
-else
-    let g:minimap_auto_start = 1
-endif
-let g:minimap_git_colors = 1
-let g:minimap_highlight_search = 1
+let g:sclow_hide_full_length = 1
 
 let g:gitgutter_highlight_lines = 1
 highlight GitGutterAddLine ctermbg=black
