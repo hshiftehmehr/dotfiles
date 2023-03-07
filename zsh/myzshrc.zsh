@@ -77,6 +77,7 @@ case $(uname -s) in
     Darwin)
         HOST_SYMBOL=''
         alias ls='ls -FG'
+        alias supernice='nice -n 20 taskpolicy -d throttle'
         ;;
     *)
         HOST_SYMBOL=$(hostname -s)
@@ -87,7 +88,7 @@ setopt prompt_subst
 autoload -U colors && colors
 
 PROMPT_EXIT_CODE='%(?..%{$fg_bold[red]%}[exit code %?]%{$reset_color%}${_newline})'
-PROMPT_SEPARATOR='' # '%{$fg[faint_white]%}${(r:$COLUMNS::. :)}%{$reset_color%}${_newline}'
+PROMPT_SEPARATOR='%{$fg[faint_white]%}${(r:$COLUMNS::. :)}%{$reset_color%}${_newline}'
 PROMPT_CWD=$PROMPT'$HOST_SYMBOL $CWD_REPO_TOPLEVEL$CWD_GIT_BRANCH$CWD_REPO_SUFFIX'
 # PROMPT_CWD=$PROMPT'$HOST_SYMBOL $CWD_REPO_TOPLEVEL$CWD_GIT_BRANCH$CWD_REPO_SUFFIX${_newline}'
 PROMPT_CLI=$PROMPT'%{$fg_bold[green]%}>%{$reset_color%} '

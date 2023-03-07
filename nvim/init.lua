@@ -54,8 +54,7 @@ local lazy = require("lazy")
 lazy.setup({
 	{
 		"VonHeikemen/lsp-zero.nvim",
-		branch = "dev-v2",
-		--   branch = 'v1.x',
+		branch = "v2.x",
 		dependencies = {
 			-- LSP Support
 			{ "neovim/nvim-lspconfig" }, -- Required
@@ -87,11 +86,17 @@ lazy.setup({
 			-- {'rafamadriz/friendly-snippets'}, -- Optional
 		},
 		config = function()
-			local lsp_zero = require("lsp-zero")
-			lsp_zero.preset("recommended")
+			local lsp = require("lsp-zero").preset({
+				name = "minimal",
+				set_lsp_keymaps = true,
+				manage_nvim_cmp = true,
+				suggest_lsp_servers = false,
+			})
+
 			-- (Optional) Configure lua language server for neovim
-			lsp_zero.nvim_workspace()
-			lsp_zero.setup()
+			lsp.nvim_workspace()
+
+			lsp.setup()
 		end,
 	},
 	{
@@ -265,6 +270,7 @@ lazy.setup({
 			vim.keymap.set("n", "<leader>b", builtin.buffers, {})
 			vim.keymap.set("n", "<leader>f", builtin.find_files, {})
 			vim.keymap.set("n", "<leader>g", builtin.live_grep, {})
+			vim.keymap.set("n", "<leader>d", builtin.diagnostics, {})
 		end,
 	},
 	{
@@ -272,12 +278,10 @@ lazy.setup({
 		config = function()
 			local Terminal = require("toggleterm.terminal").Terminal
 			vim.keymap.set("n", "<leader>sh", function()
-				Terminal:new({ direction = "horizontal" }):toggle()
+				Terminal:new({ direction = "float" }):toggle()
 			end)
 		end,
 	},
-	{ "tomtom/tcomment_vim" },
-	{ "google/vim-jsonnet" },
 	{
 		"petertriho/nvim-scrollbar",
 		config = function()
@@ -290,6 +294,10 @@ lazy.setup({
 			{ "kevinhwang91/nvim-hlslens", config = true },
 		},
 	},
+	{ "tomtom/tcomment_vim" },
+	{ "michaeljsmith/vim-indent-object" },
+	{ "google/vim-jsonnet" },
+	{ "rodjek/vim-puppet" },
 })
 
 vim.api.nvim_create_autocmd("BufEnter", {
