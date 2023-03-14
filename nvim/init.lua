@@ -50,6 +50,8 @@ require("lazy").setup({
 					-- Go
 					"golangci-lint",
 					"gopls",
+					-- puppet
+					"puppet-editor-services",
 				},
 				automatic_setup = true,
 			})
@@ -194,7 +196,6 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>ls", function()
 				telescope.extensions.file_browser.file_browser({ dir_icon = "/" })
 			end, {})
-			vim.keymap.set("n", "<leader>git", builtin.git_status, {})
 			vim.keymap.set("n", "<leader>br", function()
 				builtin.git_branches({ show_remote_tracking_branches = false })
 			end, {})
@@ -287,6 +288,15 @@ require("lazy").setup({
 				end,
 			},
 		},
+	},
+	{
+		"numToStr/FTerm.nvim",
+		config = function()
+			local shell = require("FTerm")
+			shell.setup({})
+
+			vim.keymap.set("n", "<leader>sh", shell.toggle, {})
+		end,
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
