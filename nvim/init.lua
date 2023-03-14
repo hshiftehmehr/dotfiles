@@ -292,10 +292,34 @@ require("lazy").setup({
 	{
 		"numToStr/FTerm.nvim",
 		config = function()
-			local shell = require("FTerm")
-			shell.setup({})
+			local fterm = require("FTerm")
 
-			vim.keymap.set("n", "<leader>sh", shell.toggle, {})
+			local gitui = fterm:new({
+				ft = "fterm_gitui", -- You can also override the default filetype, if you want
+				cmd = "gitui",
+				dimensions = {
+					height = 0.9,
+					width = 0.9,
+				},
+			})
+
+			vim.keymap.set("n", "<leader>sh", fterm.toggle)
+			vim.keymap.set("n", "<leader>git", function()
+				gitui:toggle()
+			end)
+		end,
+	},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				-- A list of parser names, or "all" (the five listed parsers should always be installed)
+				ensure_installed = { "c", "lua", "vim", "help", "query" },
+				auto_install = true,
+				highlight = {
+					enable = true,
+				},
+			})
 		end,
 	},
 	{
