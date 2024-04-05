@@ -1,4 +1,4 @@
-# if "brew" is installed, prioritize its packages in PATH
+# if "brew" is installed, prioritize its packages in PATH over system
 if type brew > /dev/null; then
     BREW_PREFIX=$(brew --prefix)
     BREW_ZSH_FPATH="$BREW_PREFIX/share/zsh/site-functions"
@@ -6,9 +6,13 @@ if type brew > /dev/null; then
     [[ :$PATH: == :$BREW_ZSH_FPATH:* ]] || FPATH="${BREW_ZSH_FPATH}:${FPATH}"
 fi
 
-# Look at my local in folder first
-[[ :$PATH: == :$HOME/bin:* ]] || PATH=$HOME/bin:$PATH
+# History
+HISTSIZE=100000
+SAVEHIST=$HISTSIZE
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
 
+# Persistent auth socket
 MY_SSH_AUTH_SOCK=$HOME/.ssh/ssh_auth_sock
 if [ -S "$SSH_AUTH_SOCK" ] && [ "$MY_SSH_AUTH_SOCK" != "$SSH_AUTH_SOCK" ]; then
     ln -sf "$SSH_AUTH_SOCK" "$MY_SSH_AUTH_SOCK"
@@ -18,6 +22,8 @@ if tmux show-environment -g SSH_AUTH_SOCK &> /dev/null; then
     export SSH_AUTH_SOCK
 fi
 
+
+# Import user ~/opt
 ARCH=$(uname -m)
 OPT=${HOME}/opt
 if [ -d "${OPT}/arch/${ARCH}" ]; then
@@ -28,6 +34,20 @@ if [ -d "${OPT}/arch/${ARCH}" ]; then
         fi
     done
 fi
+if [ -d "${OPT}" ]; then
+    for ITEM in "${OPT}"/*
+    do
+        if [ -d "$ITEM/bin" ]; then
+            [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
+        fi
+    done
+fi
+
+export GOPATH=$OPT/arch/$ARCH/go
+[[ ! -d "$GOPATH" ]] && mkdir -p "$GOPATH"
+
+# Look at my local in folder first
+[[ :$PATH: == :$HOME/bin:* ]] || PATH=$HOME/bin:$PATH
 
 if type vim > /dev/null; then
     export EDITOR=vim
@@ -98,3 +118,27 @@ chpwd_update_repo_path
 
 autoload -Uz compinit
 compinit
+
+function vscodium-install-extensions() {
+    if type codium >> /dev/null; then
+        codium \
+			--install-extension "eamodio.gitlens" \
+			--install-extension "golang.go" \
+			--install-extension "itspngu.jsonnet-format" \
+			--install-extension "grafana.vscode-jsonnet" \
+			--install-extension "bierner.markdown-preview-github-styles" \
+			--install-extension "zxh404.vscode-proto3" \
+			--install-extension "ms-python.black-formatter" \
+			--install-extension "ms-python.python" \
+			--install-extension "ms-python.pylint" \
+			--install-extension "puppet.puppet-vscode" \
+			--install-extension "bazelbuild.vscode-bazel"
+			# --install-extension "redhat.vscode-yaml" \
+			# --install-extension "streetsidesoftware.code-spell-checker" \
+			# --install-extension "timonwong.shellcheck" \
+			# --install-extension "zhuangtongfa.material-theme" \
+			# --install-extension "tombonnike.vscode-status-bar-format-toggle" \
+			# --install-extension "gruntfuggly.todo-tree" \
+			# --install-extension "github.vscode-pull-request-github" \
+    fi
+}
