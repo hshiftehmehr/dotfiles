@@ -1,0 +1,19 @@
+# vim: set filetype=gitconfig tabstop=4 shiftwidth=4 expandtab:
+
+[user]
+    email = hajir@shiftehmehr.net
+    name = Hajir Shiftehmehr
+
+[core]
+    excludesfile = ~/.gitignore_global
+    fsmonitor = true
+    untrackedCache = true
+
+[alias]
+    headlog = !sh -c 'git log --oneline --graph --branches ^$(git merge-base --octopus origin/HEAD $(git show-branch --independent))~'
+
+[rerere]
+    enabled = true
+
+# [includeIf "hasconfig:remote.*.url:git@github.work.*:*/**"]
+#     path = gitconfig.work

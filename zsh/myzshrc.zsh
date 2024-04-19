@@ -1,3 +1,5 @@
+# vim: set tabstop=4 shiftwidth=4 expandtab:
+
 # if "brew" is installed, prioritize its packages in PATH over system
 if type brew > /dev/null; then
     BREW_PREFIX=$(brew --prefix)
@@ -122,23 +124,24 @@ compinit
 function vscodium-install-extensions() {
     if type codium >> /dev/null; then
         codium \
-			--install-extension "eamodio.gitlens" \
-			--install-extension "golang.go" \
-			--install-extension "itspngu.jsonnet-format" \
-			--install-extension "grafana.vscode-jsonnet" \
-			--install-extension "bierner.markdown-preview-github-styles" \
-			--install-extension "zxh404.vscode-proto3" \
-			--install-extension "ms-python.black-formatter" \
-			--install-extension "ms-python.python" \
-			--install-extension "ms-python.pylint" \
-			--install-extension "puppet.puppet-vscode" \
-			--install-extension "bazelbuild.vscode-bazel"
-			# --install-extension "redhat.vscode-yaml" \
-			# --install-extension "streetsidesoftware.code-spell-checker" \
-			# --install-extension "timonwong.shellcheck" \
-			# --install-extension "zhuangtongfa.material-theme" \
-			# --install-extension "tombonnike.vscode-status-bar-format-toggle" \
-			# --install-extension "gruntfuggly.todo-tree" \
-			# --install-extension "github.vscode-pull-request-github" \
+            --install-extension "eamodio.gitlens" \
+            --install-extension "golang.go" \
+            --install-extension "itspngu.jsonnet-format" \
+            --install-extension "grafana.vscode-jsonnet" \
+            --install-extension "bierner.markdown-preview-github-styles" \
+            --install-extension "zxh404.vscode-proto3" \
+            --install-extension "ms-python.black-formatter" \
+            --install-extension "ms-python.python" \
+            --install-extension "ms-python.pylint" \
+            --install-extension "puppet.puppet-vscode" \
+            --install-extension "redhat.vscode-yaml" \
+            --install-extension "timonwong.shellcheck" \
+            --install-extension "streetsidesoftware.code-spell-checker" \
+            --install-extension "ms-azuretools.vscode-docker" \
+            --install-extension "bazelbuild.vscode-bazel"
+            # --install-extension "zhuangtongfa.material-theme" \
+            # --install-extension "tombonnike.vscode-status-bar-format-toggle" \
+            # --install-extension "gruntfuggly.todo-tree" \
+            # --install-extension "github.vscode-pull-request-github" \
     fi
 }
