@@ -25,25 +25,26 @@ if tmux show-environment -g SSH_AUTH_SOCK &> /dev/null; then
 fi
 
 
-# Import user ~/opt
 ARCH=$(uname -m)
 OPT=${HOME}/opt
-if [ -d "${OPT}/arch/${ARCH}" ]; then
-    for ITEM in "${OPT}/arch/${ARCH}"/*
-    do
-        if [ -d "$ITEM/bin" ]; then
-            [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
-        fi
-    done
-fi
-if [ -d "${OPT}" ]; then
-    for ITEM in "${OPT}"/*
-    do
-        if [ -d "$ITEM/bin" ]; then
-            [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$ITEM/bin:$PATH
-        fi
-    done
-fi
+
+# # Import user ~/opt
+# if [ -d "${OPT}/arch/${ARCH}" ]; then
+#     for ITEM in "${OPT}/arch/${ARCH}"/*
+#     do
+#         if [ -d "$ITEM/bin" ]; then
+#             [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$PATH:$ITEM/bin
+#         fi
+#     done
+# fi
+# if [ -d "${OPT}" ]; then
+#     for ITEM in "${OPT}"/*
+#     do
+#         if [ -d "$ITEM/bin" ]; then
+#             [[ :$PATH: == :$ITEM/bin:* ]] || PATH=$PATH:$ITEM/bin
+#         fi
+#     done
+# fi
 
 export GOPATH=$OPT/arch/$ARCH/go
 [[ ! -d "$GOPATH" ]] && mkdir -p "$GOPATH"
@@ -121,6 +122,18 @@ chpwd_update_repo_path
 autoload -Uz compinit
 compinit
 
+if type fzf > /dev/null; then
+    eval $(fzf --zsh)
+fi
+
+function jupyter-lab() {
+    ${HOME}/opt/arch/$(uname -m)/jupyter-lab/bin/jupyter-lab --notebook-dir=~/Library/CloudStorage/Box-Box/hajir/notebooks --ServerApp.token=''
+}
+
+function open-webui() {
+    WEBUI_AUTH=False DATA_DIR=~/Documents/open-webui-data  ~/opt/arch/$(uname -m)/open-webui/bin/open-webui serve
+}
+
 function vscodium-install-extensions() {
     if type codium >> /dev/null; then
         codium \
@@ -130,18 +143,30 @@ function vscodium-install-extensions() {
             --install-extension "grafana.vscode-jsonnet" \
             --install-extension "bierner.markdown-preview-github-styles" \
             --install-extension "zxh404.vscode-proto3" \
-            --install-extension "ms-python.black-formatter" \
             --install-extension "ms-python.python" \
-            --install-extension "ms-python.pylint" \
+            --install-extension "charliermarsh.ruff" \
             --install-extension "puppet.puppet-vscode" \
             --install-extension "redhat.vscode-yaml" \
             --install-extension "timonwong.shellcheck" \
             --install-extension "streetsidesoftware.code-spell-checker" \
             --install-extension "ms-azuretools.vscode-docker" \
             --install-extension "bazelbuild.vscode-bazel"
+            # --install-extension "ms-python.pylint" \
+            # --install-extension "ms-python.black-formatter" \
             # --install-extension "zhuangtongfa.material-theme" \
             # --install-extension "tombonnike.vscode-status-bar-format-toggle" \
             # --install-extension "gruntfuggly.todo-tree" \
             # --install-extension "github.vscode-pull-request-github" \
     fi
+}
+
+fucntion fetchrepos() {
+    REPOS_DIR=$1
+    for REPO in ${REPOS_DIR}/*
+    do
+        echo "\n\nFetching '$REPO'\n"
+        git -C $REPO fetch --quiet --auto-maintenance --auto-gc upstream $(git -C $REPO remote show upstream | sed -n '/HEAD branch/s/.*: //p') &
+    done
+    wait
+    # wait $(jobs -rp) 2> /dev/null
 }

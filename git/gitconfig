@@ -11,6 +11,7 @@
 
 [alias]
     headlog = !sh -c 'git log --oneline --graph --branches ^$(git merge-base --octopus origin/HEAD $(git show-branch --independent))~'
+    lslog = log --color --oneline --no-abbrev --format=format:'%C(dim white)%h%C(auto)%d%Creset %C(green)(%ar)%Creset %C(cyan)%cN <%cL>%Creset %s'
 
 [rerere]
     enabled = true
