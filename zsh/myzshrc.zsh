@@ -131,7 +131,23 @@ function jupyter-lab() {
 }
 
 function open-webui() {
-    WEBUI_AUTH=False DATA_DIR=~/Documents/open-webui-data  ~/opt/arch/$(uname -m)/open-webui/bin/open-webui serve
+    OPENWEBUIDIR=$HOME/Documents/open-webui
+    # curl https://hub.docker.com/v2/namespaces/searxng/repositories/searxng/tags\?page_size\=100 | jq -r '.results[].name'
+    SEARXNG_NAME=searxng
+    SEARXNG_VER=2025.1.21-bee267792
+    # openwebui
+    OPENWEBUI_NAME=open-webui
+    OPENWEBUI_VER=v0.5.10
+
+    docker stop $OPENWEBUI_NAME
+    docker rm $OPENWEBUI_NAME
+    docker stop $SEARXNG_NAME
+    docker rm $SEARXNG_NAME
+
+    # cat Documents/open-webui/settings.yml | yq '.search.formats +=  "blah"'
+    docker run -d -p 8080:8080 -v $OPENWEBUIDIR/searxng/settings.yml:/etc/searxng/settings.yml --name $SEARXNG_NAME searxng/searxng:$SEARXNG_VER
+    docker run -d --privileged=true -p 3000:8080 -e WEBUI_AUTH=False -v $OPENWEBUIDIR/open-webui:/app/backend/data --name $OPENWEBUI_NAME --restart always ghcr.io/open-webui/open-webui:$OPENWEBUI_VER
+    # WEBUI_AUTH=False DATA_DIR=~/Documents/open-webui-data  ~/opt/arch/$(uname -m)/open-webui/bin/open-webui serve
 }
 
 function vscodium-install-extensions() {
@@ -165,6 +181,7 @@ fucntion fetchrepos() {
     for REPO in ${REPOS_DIR}/*
     do
         echo "\n\nFetching '$REPO'\n"
+        git -C $REPO fetch --all --prune
         git -C $REPO fetch --quiet --auto-maintenance --auto-gc upstream $(git -C $REPO remote show upstream | sed -n '/HEAD branch/s/.*: //p') &
     done
     wait
